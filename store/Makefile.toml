@@ -4,7 +4,7 @@ env_files = [
 ]
 
 [env]
-DATABASE_URL = "postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
+DATABASE_URL = "postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
 
 [tasks.run]
 description = "Run store"
@@ -16,6 +16,7 @@ args = ["run"]
 description = "Run unit tests"
 command = "cargo"
 args = ["test"]
+dependencies = ["db-reset", "db-setup"]
 
 [tasks.db-setup]
 description = "Setup DB"
