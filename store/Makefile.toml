@@ -1,0 +1,45 @@
+env_files = [
+    { path = "./.env", profile = "production" },
+    { path = "./.env.test", profile = "test" },
+]
+
+[env]
+DATABASE_URL = "postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
+
+[tasks.run]
+description = "Run store"
+dependencies = ["db-setup"]
+command = "cargo"
+args = ["run"]
+
+[tasks.test]
+description = "Run unit tests"
+command = "cargo"
+args = ["test"]
+
+[tasks.db-setup]
+description = "Setup DB"
+command = "sqlx"
+args = ["database", "setup"]
+
+[tasks.db-prepare]
+description = "Sync sqlx-data file"
+command = "cargo"
+args = ["sqlx", "prepare", "--", "--lib"]
+dependencies = ["db-setup"]
+env = { SQLX_OFFLINE = "false" }
+
+[tasks.db-reset]
+description = "Reset DB"
+command = "sqlx"
+args = ["database", "reset", "-y"]
+
+[tasks.lint]
+description = "Run lint"
+command = "cargo"
+args = ["clippy"]
+
+[tasks.format]
+description = "Run the cargo rustfmt plugin."
+command = "cargo"
+args = ["fmt", "--all"]
