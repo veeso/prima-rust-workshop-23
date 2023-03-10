@@ -1,0 +1,27 @@
+[package]
+name = "store"
+authors = ["Christian Visintin <christian.visintin1997@gmail.com>"]
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "^1.0"
+chrono = "^0.4"
+envy = "^0.4.2"
+protobuf = "^3.2"
+rust_decimal = "^1.28"
+serde = { version = "^1", features = [ "derive" ] }
+sqlx = { version = "^0.6", features = [
+    "postgres",
+    "runtime-tokio-rustls",
+    "uuid",
+    "chrono",
+    "migrate",
+] }
+thiserror = "^1.0"
+tokio = { version = "^1.26", features = [ "full" ] }
+tracing = "^0.1"
+tracing-subscriber = "^0.2"
+uuid = { version = "^1", features = ["v4"] }

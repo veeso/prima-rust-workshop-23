@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orders
+    ports:
+      - "15432:5432"
+
+  store:
+    build: store/
+    restart: always
+    depends_on:
+      - postgres
+
+  user_api:
+    build: user-api/
+    restart: always
+    depends_on:
+      - store

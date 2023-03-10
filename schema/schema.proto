@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package store;
+
+/** Entities */
+
+/** Decimal representation of a number */
+message Decimal { string value = 1; }
+
+/** Iso8601 date representation */
+message Iso8601 { string timestamp = 1; }
+
+/** Store article
+ */
+message Article {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  Decimal unit_price = 4;
+}
+
+/** Customer order with its articles */
+message Order {
+  /** Order status */
+  enum OrderStatus {
+    CREATED = 0;
+    PREPARING = 1;
+    PAYMENT_FAILED = 2;
+    SHIPPED = 3;
+  }
+
+  string id = 1;
+  Iso8601 created_at = 2;
+  string transaction_id = 3;
+  OrderStatus status = 4;
+  repeated Article articles = 5;
+}
+
+/** Sign up message must be used to create a new customer inside of the store db
+ */
+message SignUpRequest {
+  string email = 1;
+  string password = 1;
+}
+
+/** Sign up message must be used to authenticate as a customer
+ */
+message SignInRequest {
+  string email = 1;
+  string password = 2;
+}
+
+/** AuthResponse is the response for SignUp/SignIn messages
+ */
+message AuthResponse {
+  /** Authentication error description
+   */
+  enum AuthError {
+    EMAIL_ALREADY_TAKEN = 0;
+    BAD_EMAIL_SYNTAX = 1;
+    INVALID_EMAIL_OR_PASSWORD = 2;
+  }
+  oneof status {
+    string user_id = 1;
+    AuthError error = 2;
+  }
+}
+
+/** Query to get store articles by query. If query is empty returns all
+ */
+message QueryArticlesRequest {
+  string query = 1;
+  uint32 page_number = 2;
+  uint32 results_per_page = 3;
+}
+
+/** Result for queryArticles */
+message QueryArticlesResult { repeated Article articles = 1; }
+
+/** Query to get user's orders */
+message QueryOrdersRequest {
+  string user_id = 1;
+  uint32 page_number = 2;
+  uint32 results_per_page = 3;
+}
+
+/** Result for queryOrders */
+message QueryOrdersResult { repeated Order orders = 1; }
+
+/** Message to submit an order */
+message
+SubmitOrderRequest { /** Type which defines an article inside an order */
+  message OrderArticle {
+    string article_id = 1;
+    uint32 quantity = 2;
+  }
+  repeated OrderArticle articles = 1;
+}
+
+/** Response for submit order response */
+message SubmitOrderResponse {
+  /** Authentication error description
+   */
+  enum SubmitOrderError {
+    UNKNOWN_ERROR = 0;
+    INVALID_ARTICLE = 1;
+  }
+  oneof status {
+    string order_id = 1;
+    SubmitOrderError error = 2;
+  }
+}
+
+/** Submit order payment status*/
+message SubmitOrderPaymentRequest {
+  /** Submit payment succeed for an order */
+  message SubmitOrderPaymentSucceedRequest {
+    string order_id = 1;
+    string transaction_id = 2;
+  }
+
+  /** Submit payment failed for an order */
+  message SubmitOrderPaymentFailedRequest { string order_id = 1; }
+
+  oneof status {
+    SubmitOrderPaymentSucceedRequest success = 1;
+    SubmitOrderPaymentFailedRequest failed = 2;
+  }
+}
+
+/** Store services handled all the requests regarding customer's orders
+ */
+service StoreService {
+
+  rpc SignIn(SignInRequest) returns (AuthResponse);
+  rpc SignUp(SignUpRequest) returns (AuthResponse);
+
+  rpc QueryOrders(QueryOrdersRequest) returns (QueryOrdersResult);
+  rpc QueryArticles(QueryArticlesRequest) returns (QueryArticlesResult);
+
+  rpc SubmitOrder(SubmitOrderRequest) returns (SubmitOrderResponse);
+  rpc SubmitOrderPayment(SubmitOrderPaymentRequest)
+      returns (SubmitOrderResponse);
+}
