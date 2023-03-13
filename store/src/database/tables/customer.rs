@@ -26,7 +26,7 @@ impl Customer {
         .bind(customer.id)
         .bind(&customer.email)
         .bind(&customer.password)
-        .bind(&customer.created_at)
+        .bind(customer.created_at)
         .execute(db.pool())
         .await
         .map_err(DatabaseError::from)?
@@ -38,16 +38,16 @@ impl Customer {
         Ok(customer)
     }
 
-    /// Find `Customer` by `id`
-    pub async fn find_by_id(db: &StoreDb, id: &Uuid) -> DatabaseResult<Option<Customer>> {
-        sqlx::query_as(r#"SELECT * FROM customer WHERE id = $1"#)
-            .bind(id)
+    /// Find `Customer` by `email`
+    pub async fn find_by_email(db: &StoreDb, email: &str) -> DatabaseResult<Option<Customer>> {
+        sqlx::query_as(r#"SELECT * FROM customer WHERE email = $1"#)
+            .bind(email)
             .fetch_optional(db.pool())
             .await
             .map_err(DatabaseError::from)
     }
 
-    /// Find `Customer` by `email`
+    /// Find `Customer` by `email` and `password`
     pub async fn find_by_email_and_password(
         db: &StoreDb,
         email: &str,
@@ -97,6 +97,21 @@ mod test {
 
     #[tokio::test]
     async fn should_get_user_by_email() {
+        let db = StoreDb::connect(&env::var("DATABASE_URL").expect("DATABASE_URL not found"))
+            .await
+            .expect("failed to connect to database");
+        let new_customer =
+            Customer::insert(&db, "should_get_user_by_email@gmail.com", "password123")
+                .await
+                .unwrap();
+        let christian = Customer::find_by_email(&db, "should_get_user_by_email@gmail.com")
+            .await
+            .unwrap();
+        assert_eq!(new_customer.id, christian.unwrap().id);
+    }
+
+    #[tokio::test]
+    async fn should_get_user_by_email_and_password() {
         let db = StoreDb::connect(&env::var("DATABASE_URL").expect("DATABASE_URL not found"))
             .await
             .expect("failed to connect to database");

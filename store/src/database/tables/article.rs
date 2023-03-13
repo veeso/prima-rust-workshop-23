@@ -88,9 +88,9 @@ mod test {
         let db = StoreDb::connect(&env::var("DATABASE_URL").expect("DATABASE_URL not found"))
             .await
             .expect("failed to connect to database");
-        let cat = insert_article(&db, "cat").await;
-        let dog = insert_article(&db, "dog").await;
-        let maine_coon = insert_article(&db, "maine coon cat").await;
+        insert_article(&db, "cat").await;
+        insert_article(&db, "dog").await;
+        insert_article(&db, "maine coon cat").await;
         assert_eq!(
             Article::find_by_name(&db, "cat", 0, 64)
                 .await

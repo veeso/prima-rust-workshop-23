@@ -9,7 +9,7 @@ pub struct CustomerOrder {
     pub customer_id: Uuid,
     pub created_at: NaiveDateTime,
     pub status: OrderStatus,
-    pub transaction_id: Option<Uuid>,
+    pub transaction_id: Option<String>,
 }
 
 /// Order status
@@ -49,7 +49,10 @@ impl CustomerOrder {
     }
 
     /// Insert a new order in the database
-    pub async fn insert_order(db: &StoreDb, customer_id: &Uuid) -> DatabaseResult<Self> {
+    pub async fn insert_order(
+        db: impl sqlx::Executor<'_, Database = sqlx::Postgres>,
+        customer_id: &Uuid,
+    ) -> DatabaseResult<Self> {
         let order = Self::new(customer_id);
         debug!("inserting a new order {} to repository", order.id);
         let rows = sqlx::query(
@@ -59,7 +62,7 @@ impl CustomerOrder {
         .bind(order.customer_id)
         .bind(order.created_at)
         .bind(order.status)
-        .execute(db.pool())
+        .execute(db)
         .await
         .map_err(DatabaseError::from)?
         .rows_affected();
@@ -70,10 +73,51 @@ impl CustomerOrder {
         Ok(order)
     }
 
+    /// Update order status
+    pub async fn update_status(
+        db: impl sqlx::Executor<'_, Database = sqlx::Postgres>,
+        order_id: &Uuid,
+        status: OrderStatus,
+    ) -> DatabaseResult<()> {
+        debug!("updating status to {:?} to rder {order_id} ", status);
+        let rows = sqlx::query("UPDATE customer_order SET status = $1 WHERE id = $2")
+            .bind(status)
+            .bind(order_id)
+            .execute(db)
+            .await
+            .map_err(DatabaseError::from)?
+            .rows_affected();
+        if rows != 1 {
+            return Err(DatabaseError::TooManyInserts);
+        }
+
+        Ok(())
+    }
+
+    pub async fn update_transaction_id(
+        db: impl sqlx::Executor<'_, Database = sqlx::Postgres>,
+        order_id: &Uuid,
+        transaction_id: &str,
+    ) -> DatabaseResult<()> {
+        debug!("updating transaction_id to {transaction_id} to rder {order_id} ");
+        let rows = sqlx::query("UPDATE customer_order SET transaction_id = $1 WHERE id = $2")
+            .bind(transaction_id)
+            .bind(order_id)
+            .execute(db)
+            .await
+            .map_err(DatabaseError::from)?
+            .rows_affected();
+        if rows != 1 {
+            return Err(DatabaseError::TooManyInserts);
+        }
+
+        Ok(())
+    }
+
     fn new(customer_id: &Uuid) -> Self {
         Self {
             id: Uuid::new_v4(),
-            customer_id: customer_id.clone(),
+            customer_id: *customer_id,
             created_at: Utc::now().naive_utc(),
             status: OrderStatus::Created,
             transaction_id: None,
@@ -102,6 +146,66 @@ mod test {
             .await
             .unwrap();
         assert_eq!(order.customer_id, customer.id);
+    }
+
+    #[tokio::test]
+    async fn should_update_order_status() {
+        let db = StoreDb::connect(&env::var("DATABASE_URL").expect("DATABASE_URL not found"))
+            .await
+            .expect("failed to connect to database");
+
+        let customer = Customer::insert(&db, "should_update_order_status@prima.it", "abcdef")
+            .await
+            .unwrap();
+        let order = CustomerOrder::insert_order(&db, &customer.id)
+            .await
+            .unwrap();
+
+        assert!(
+            CustomerOrder::update_status(&db, &order.id, OrderStatus::Shipped)
+                .await
+                .is_ok()
+        );
+
+        assert_eq!(
+            CustomerOrder::find_by_id(&db, &order.id)
+                .await
+                .unwrap()
+                .unwrap()
+                .status,
+            OrderStatus::Shipped
+        );
+    }
+
+    #[tokio::test]
+    async fn should_update_transaction_id() {
+        let db = StoreDb::connect(&env::var("DATABASE_URL").expect("DATABASE_URL not found"))
+            .await
+            .expect("failed to connect to database");
+
+        let customer = Customer::insert(&db, "should_update_transaction_id@prima.it", "abcdef")
+            .await
+            .unwrap();
+        let order = CustomerOrder::insert_order(&db, &customer.id)
+            .await
+            .unwrap();
+
+        assert!(
+            CustomerOrder::update_transaction_id(&db, &order.id, "dummy")
+                .await
+                .is_ok()
+        );
+
+        assert_eq!(
+            CustomerOrder::find_by_id(&db, &order.id)
+                .await
+                .unwrap()
+                .unwrap()
+                .transaction_id
+                .as_deref()
+                .unwrap(),
+            "dummy"
+        );
     }
 
     #[tokio::test]

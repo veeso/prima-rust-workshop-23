@@ -11,5 +11,5 @@ mod order_article;
 
 pub use article::Article;
 pub use customer::Customer;
-pub use order::CustomerOrder;
+pub use order::{CustomerOrder, OrderStatus};
 pub use order_article::OrderArticle;

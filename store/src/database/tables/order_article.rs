@@ -27,7 +27,7 @@ impl OrderArticle {
 
     /// Insert a new `OrderArticle` record in the database
     pub async fn insert(
-        db: &StoreDb,
+        db: impl sqlx::Executor<'_, Database = sqlx::Postgres>,
         order_id: &Uuid,
         article_id: &Uuid,
         quantity: i32,
@@ -46,7 +46,7 @@ impl OrderArticle {
         .bind(order_article.unit_price)
         .bind(order_article.order_id)
         .bind(order_article.article_id)
-        .execute(db.pool())
+        .execute(db)
         .await
         .map_err(DatabaseError::from)?
         .rows_affected();
@@ -60,8 +60,8 @@ impl OrderArticle {
     fn new(order_id: &Uuid, article_id: &Uuid, quantity: i32, unit_price: Decimal) -> Self {
         Self {
             id: Uuid::new_v4(),
-            order_id: order_id.clone(),
-            article_id: article_id.clone(),
+            order_id: *order_id,
+            article_id: *article_id,
             quantity,
             unit_price,
         }

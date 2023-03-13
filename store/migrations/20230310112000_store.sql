@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS customer_order (
   customer_id uuid REFERENCES customer(id) ON DELETE RESTRICT,
   created_at timestamp,
   status order_status NOT NULL,
-  transaction_id uuid
+  transaction_id text
 );
 
 CREATE TABLE IF NOT EXISTS order_article (
