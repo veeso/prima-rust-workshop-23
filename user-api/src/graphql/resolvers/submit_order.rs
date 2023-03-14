@@ -2,20 +2,20 @@ use uuid::Uuid;
 
 use crate::{
     graphql::types::{Order, OrderArticle},
-    proto::ProtobufClient,
+    proto::StoreClient,
 };
 
 use std::sync::Arc;
 
 /// Submit order mutation
 pub struct SubmitOrder {
-    protobuf_client: Arc<ProtobufClient>,
+    store_client: Arc<StoreClient>,
 }
 
 impl SubmitOrder {
     /// Instantiates a new `SubmitOrder`
-    pub fn new(protobuf_client: Arc<ProtobufClient>) -> Self {
-        Self { protobuf_client }
+    pub fn new(store_client: Arc<StoreClient>) -> Self {
+        Self { store_client }
     }
 
     /// Resolve mutation for submit order

@@ -1,16 +1,16 @@
-use crate::{graphql::types::Article, proto::ProtobufClient};
+use crate::{graphql::types::Article, proto::StoreClient};
 
 use std::sync::Arc;
 
 /// Articles query
 pub struct Articles {
-    protobuf_client: Arc<ProtobufClient>,
+    store_client: Arc<StoreClient>,
 }
 
 impl Articles {
     /// Instantiates a new `Articles`
-    pub fn new(protobuf_client: Arc<ProtobufClient>) -> Self {
-        Self { protobuf_client }
+    pub fn new(store_client: Arc<StoreClient>) -> Self {
+        Self { store_client }
     }
 
     /// Resolve query articles

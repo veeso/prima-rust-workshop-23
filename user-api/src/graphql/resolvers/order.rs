@@ -1,17 +1,17 @@
-use crate::{graphql::types::Order, proto::ProtobufClient};
+use crate::{graphql::types::Order, proto::StoreClient};
 
 use std::sync::Arc;
 use uuid::Uuid;
 
 /// Orders query
 pub struct Orders {
-    protobuf_client: Arc<ProtobufClient>,
+    store_client: Arc<StoreClient>,
 }
 
 impl Orders {
     /// Instantiates a new `Orders`
-    pub fn new(protobuf_client: Arc<ProtobufClient>) -> Self {
-        Self { protobuf_client }
+    pub fn new(store_client: Arc<StoreClient>) -> Self {
+        Self { store_client }
     }
 
     /// Resolve query orders
