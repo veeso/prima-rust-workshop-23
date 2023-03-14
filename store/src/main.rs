@@ -13,7 +13,7 @@ mod service;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
-    info!("producer v{} - developed by {}", APP_VERSION, APP_AUTHORS);
+    info!("store v{} - developed by {}", APP_VERSION, APP_AUTHORS);
 
     let config = config::Config::try_from_env()?;
     info!("configuration parsed");

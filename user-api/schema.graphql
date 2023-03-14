@@ -1,0 +1,47 @@
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+}
+
+type RootQueryType {
+  articles(query: String, page: Int!, count: Int!): [Article!]!
+  orders(page: Int!, count: Int!): [Order!]!
+}
+
+type RootMutationType {
+  submitOrder(order: [OrderArticle!]!): Order!
+}
+
+type Article {
+  id: Uuid!
+  name: String!
+  description: String!
+  unitPrice: Decimal!
+}
+
+type Order {
+  id: Uuid!
+  createdAt: NaiveDateTime!
+  status: OrderStatus!
+  articles: [ArticleInOrder!]!
+}
+
+enum OrderStatus {
+  CREATED
+  PREPARING
+  SHIPPED
+  PAYMENT_FAILED
+}
+
+type ArticleInOrder {
+  id: Uuid!
+  name: String!
+  description: String!
+  unitPrice: Decimal!
+  quantity: Int!
+}
+
+input OrderArticle {
+  id: Uuid!
+  quantity: Int!
+}

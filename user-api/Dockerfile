@@ -1,8 +1,8 @@
 FROM rust:1.68.0-slim-buster
 
-RUN apt update && \
-  apt install -y python3 && \
-  pip3 install requests psycopg2
+RUN cargo install cargo-make && \
+  apt update && \
+  apt install -y protobuf-compiler
 
 USER root
 
