@@ -9,7 +9,7 @@ type RootQueryType {
 }
 
 type RootMutationType {
-  submitOrder(order: [OrderArticle!]!): Order!
+  submitOrder(order: [OrderArticle!]!): OrderSubmission!
 }
 
 type Article {
@@ -44,4 +44,20 @@ type ArticleInOrder {
 input OrderArticle {
   id: Uuid!
   quantity: Int!
+}
+
+union OrderSubmission = OrderAccepted | OrderRejected
+
+type OrderAccepted {
+  order: Order!
+}
+
+type OrderRejected {
+  code: OrderRejectedCode!
+  message: String!
+}
+
+enum OrderRejectedCode {
+  UNKNOWN_ERROR
+  INVALID_ARTICLE
 }
