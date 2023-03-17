@@ -13,6 +13,15 @@ pub enum AuthResponse {
     Failed(AuthError),
 }
 
+impl AuthResponse {
+    pub fn user_id(&self) -> Option<Uuid> {
+        match self {
+            Self::Authenticated(id) => Some(id.clone()),
+            Self::Failed(_) => None,
+        }
+    }
+}
+
 impl TryFrom<super::store::AuthResponse> for AuthResponse {
     type Error = SyntaxError;
 

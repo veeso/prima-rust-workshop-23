@@ -11,16 +11,6 @@ pub struct OrderArticle {
     quantity: u32,
 }
 
-impl OrderArticle {
-    pub fn id(&self) -> &Uuid {
-        &self.id
-    }
-
-    pub fn quantity(&self) -> u32 {
-        self.quantity
-    }
-}
-
 impl From<ProtoOrderArticle> for OrderArticle {
     fn from(value: ProtoOrderArticle) -> Self {
         Self {

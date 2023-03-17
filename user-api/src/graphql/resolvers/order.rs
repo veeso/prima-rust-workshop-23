@@ -9,7 +9,7 @@ pub struct Orders {
 
 impl Orders {
     /// Instantiates a new `Orders`
-    pub fn new(store_server_url: String) -> Self {
+    pub fn new(store_server_url: &str) -> Self {
         Self {
             store_server_url: store_server_url.to_string(),
         }

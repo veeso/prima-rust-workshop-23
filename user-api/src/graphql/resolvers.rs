@@ -1,6 +1,5 @@
 //! # GraphQL resolvers
 
-pub const INTERNAL_SERVER_ERROR: &str = "INTERNAL SERVER ERROR";
 pub const UNAUTHORIZED: &str = "UNAUTHORIZED";
 
 mod articles;
