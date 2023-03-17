@@ -5,6 +5,12 @@ use uuid::Uuid as UuidV4;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Uuid(UuidV4);
 
+impl Uuid {
+    pub fn uuid(self) -> UuidV4 {
+        self.0
+    }
+}
+
 impl From<Uuid> for UuidV4 {
     fn from(uuid: Uuid) -> Self {
         uuid.0

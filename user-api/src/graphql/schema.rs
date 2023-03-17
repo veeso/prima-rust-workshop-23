@@ -5,7 +5,7 @@ use super::{
         Articles as ArticlesResolver, Orders as OrdersResolver, SubmitOrder as SubmitOrderResolver,
         UNAUTHORIZED,
     },
-    types::{Article, Order, OrderArticle},
+    types::{Article, Order, OrderArticle, OrderSubmission},
     GraphqlRequestParams,
 };
 
@@ -21,8 +21,8 @@ impl QueryRoot {
         &self,
         ctx: &Context<'ctx>,
         query: Option<String>,
-        page: u64,
-        count: u64,
+        page: u32,
+        count: u32,
     ) -> async_graphql::Result<Vec<Article>> {
         let resolver = ctx.data_unchecked::<ArticlesResolver>();
         resolver.resolve(query, page, count).await
@@ -31,8 +31,8 @@ impl QueryRoot {
     async fn orders<'ctx>(
         &self,
         ctx: &Context<'ctx>,
-        page: u64,
-        count: u64,
+        page: u32,
+        count: u32,
     ) -> async_graphql::Result<Vec<Order>> {
         let resolver = ctx.data_unchecked::<OrdersResolver>();
         let request_params = ctx.data_unchecked::<GraphqlRequestParams>();
@@ -52,7 +52,7 @@ impl MutationRoot {
         &self,
         ctx: &Context<'ctx>,
         articles: Vec<OrderArticle>,
-    ) -> async_graphql::Result<Order> {
+    ) -> async_graphql::Result<OrderSubmission> {
         let resolver = ctx.data_unchecked::<SubmitOrderResolver>();
         let request_params = ctx.data_unchecked::<GraphqlRequestParams>();
         if let Some(user_id) = request_params.user_id {

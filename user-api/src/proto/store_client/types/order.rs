@@ -40,7 +40,6 @@ pub enum OrderStatus {
     Preparing,
     PaymentFailed,
     Shipped,
-    Unknown,
 }
 
 impl TryFrom<i32> for OrderStatus {
@@ -102,6 +101,7 @@ impl TryFrom<super::store::SubmitOrderResponse> for SubmitOrderResponse {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
 pub enum SubmitOrderError {
     Unknown,
     InvalidArticle,

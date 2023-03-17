@@ -1,12 +1,10 @@
 //! # Store client
 
-mod types;
+pub mod types;
 pub mod store {
     tonic::include_proto!("store");
 }
-pub use self::types::{
-    Article, AuthResponse, Order, OrderedArticle, SubmitOrderError, SubmitOrderResponse,
-};
+use self::types::{Article, AuthResponse, Order, OrderedArticle, SubmitOrderResponse};
 
 use super::ProtobufResult;
 use store::store_service_client::StoreServiceClient;

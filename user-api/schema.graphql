@@ -49,7 +49,7 @@ input OrderArticle {
 union OrderSubmission = OrderAccepted | OrderRejected
 
 type OrderAccepted {
-  order: Order!
+  id: Uuid!
 }
 
 type OrderRejected {

@@ -38,8 +38,6 @@ pub enum AuthError {
     BadEmailSyntax,
     #[error("invalid email or password")]
     InvalidEmailOrPassword,
-    #[error("unknown error")]
-    UnknownError,
 }
 
 impl TryFrom<i32> for AuthError {

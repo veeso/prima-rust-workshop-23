@@ -1,25 +1,33 @@
 use crate::{graphql::types::Article, proto::StoreClient};
 
-use std::sync::Arc;
-
 /// Articles query
 pub struct Articles {
-    store_client: Arc<StoreClient>,
+    store_server_url: String,
 }
 
 impl Articles {
     /// Instantiates a new `Articles`
-    pub fn new(store_client: Arc<StoreClient>) -> Self {
-        Self { store_client }
+    pub fn new(store_server_url: &str) -> Self {
+        Self {
+            store_server_url: store_server_url.to_string(),
+        }
     }
 
     /// Resolve query articles
     pub async fn resolve(
         &self,
         query: Option<String>,
-        page: u64,
-        count: u64,
+        page: u32,
+        count: u32,
     ) -> async_graphql::Result<Vec<Article>> {
-        todo!()
+        let mut client = StoreClient::connect(self.store_server_url.clone()).await?;
+        let articles = client
+            .query_articles(query, page, count)
+            .await?
+            .into_iter()
+            .map(Article::from)
+            .collect();
+
+        Ok(articles)
     }
 }
