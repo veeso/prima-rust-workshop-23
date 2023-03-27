@@ -23,5 +23,7 @@ services:
   user_api:
     build: user-api/
     restart: always
+    ports:
+      - "3005:3005"
     depends_on:
       - store

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS customer (
   id uuid NOT NULL PRIMARY KEY,
   email text NOT NULL UNIQUE,
   password text NOT NULL,
-  created_at timestamp
+  created_at timestamp NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS article (
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS article (
 CREATE TABLE IF NOT EXISTS customer_order (
   id uuid NOT NULL PRIMARY KEY,
   customer_id uuid REFERENCES customer(id) ON DELETE RESTRICT,
-  created_at timestamp,
+  created_at timestamp NOT NUll,
   status order_status NOT NULL,
   transaction_id text
 );

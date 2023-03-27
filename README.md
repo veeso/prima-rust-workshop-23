@@ -7,6 +7,10 @@ Developed by [veeso](https://github.com/veeso).
 ### Start services
 
 ```sh
+mkdir -p store/proto
+mkdir -p user-api/proto
+cp proto/schema.proto store/proto/
+cp proto/schema.proto user-api/proto/
 docker-compose build
 docker-compose up -d
 ```
@@ -14,7 +18,7 @@ docker-compose up -d
 ### Load fixtures
 
 ```sh
-pip3 install requests psycopg2
+pip3 install requests psycopg2 csv
 ./tools/generate-fixtures.py --customers 20 --orders-per-customer 3 --articles-per-order 3
 ```
 

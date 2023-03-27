@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -gx
+set -e
 
-export RUST_LOGLEVEL="debug"
+export RUST_LOG="debug"
 
 cargo make --profile production run
