@@ -9,10 +9,7 @@ RUN PROTOC_VERSION=$(curl -s "https://api.github.com/repos/protocolbuffers/proto
   unzip -q protoc.zip bin/protoc -d /usr/local && \
   chmod a+x /usr/local/bin/protoc
 
-COPY . /app/store
 WORKDIR /app/store
-
-RUN  cp -r /app/store/proto/ /app/proto
 
 USER root
 

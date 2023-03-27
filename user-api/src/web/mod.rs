@@ -9,7 +9,7 @@ use session::SessionClient;
 
 use actix_session::{storage::CookieSessionStore, SessionMiddleware};
 use actix_web::cookie::Key;
-use actix_web::{dev::Server, App as ActixApp, HttpServer};
+use actix_web::{dev::Server, web::Data, App as ActixApp, HttpServer};
 use std::net::TcpListener;
 
 pub struct WebServer {
@@ -24,6 +24,8 @@ impl WebServer {
     /// Initialize web server
     pub async fn init(protobuf_url: &str, web_port: u16) -> anyhow::Result<Self> {
         debug!("webserver initialized");
+        debug!("protobuf url: {protobuf_url}");
+        debug!("web port: {web_port}");
 
         let listener = TcpListener::bind(&format!("0.0.0.0:{web_port}"))?;
         let secret_key = Key::generate();
@@ -31,9 +33,9 @@ impl WebServer {
         let server = {
             let protobuf_url = protobuf_url.to_string();
             HttpServer::new(move || {
-                let web_data = WebserverData {
+                let web_data = Data::new(WebserverData {
                     store_client_url: protobuf_url.to_string(),
-                };
+                });
                 ActixApp::new()
                     .service(graphql_api::service_factory(&protobuf_url))
                     .service(health_check::check_action)

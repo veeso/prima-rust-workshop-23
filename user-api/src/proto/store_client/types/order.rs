@@ -25,8 +25,9 @@ impl TryFrom<super::store::Order> for Order {
 
         Ok(Self {
             id: Uuid::from_str(&value.id)?,
-            created_at: NaiveDateTime::from_str(
+            created_at: NaiveDateTime::parse_from_str(
                 &value.created_at.map(|x| x.timestamp).unwrap_or_default(),
+                "%Y-%m-%d %H:%M:%S",
             )?,
             transaction_id: value.transaction_id,
             status: OrderStatus::try_from(value.status)?,

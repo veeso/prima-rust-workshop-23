@@ -19,6 +19,9 @@ services:
     restart: always
     depends_on:
       - postgres
+    volumes:
+      - ./store:/app/store
+      - ./proto:/app/proto
 
   user_api:
     build: user-api/
@@ -27,3 +30,6 @@ services:
       - "3005:3005"
     depends_on:
       - store
+    volumes:
+      - ./user-api:/app/user-api
+      - ./proto:/app/proto

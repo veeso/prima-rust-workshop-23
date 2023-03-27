@@ -30,9 +30,9 @@ struct AuthResponse {
 
 #[post("/auth/sign-in")]
 async fn sign_in(
-    session: Session,
-    data: web::Data<WebserverData>,
     request: web::Json<SignInRequest>,
+    data: web::Data<WebserverData>,
+    session: Session,
 ) -> Result<HttpResponse, Error> {
     let session = SessionClient::from(session);
     let payload = request.into_inner();
@@ -56,9 +56,9 @@ async fn sign_in(
 
 #[post("/auth/sign-up")]
 async fn sign_up(
-    session: Session,
-    data: web::Data<WebserverData>,
     request: web::Json<SignUpRequest>,
+    data: web::Data<WebserverData>,
+    session: Session,
 ) -> Result<HttpResponse, Error> {
     let session = SessionClient::from(session);
     let payload = request.into_inner();

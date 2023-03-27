@@ -162,7 +162,7 @@ impl ProtobufStoreService for StoreService {
             orders_with_article.push(store::Order {
                 id: order.id.to_string(),
                 created_at: Some(store::Iso8601 {
-                    timestamp: order.created_at.to_string(),
+                    timestamp: order.created_at.format("%Y-%m-%d %H:%M:%S").to_string(),
                 }),
                 transaction_id: order.transaction_id,
                 status: match order.status {

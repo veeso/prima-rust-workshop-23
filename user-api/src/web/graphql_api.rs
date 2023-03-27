@@ -30,14 +30,15 @@ pub fn service_factory(
         .finish();
 
     web::resource("/graphql")
-        .to(graphql_action)
+        .route(web::post().to(graphql_action))
+        .route(web::get().to(graphql_action))
         .app_data(Data::new(schema))
 }
 
 async fn graphql_action(
-    session: Session,
     schema: Data<ApiSchema>,
     req: GraphQLRequest,
+    session: Session,
 ) -> GraphQLResponse {
     let session = SessionClient::from(session);
     let user_id = session.get_user().map(|x| x.id);

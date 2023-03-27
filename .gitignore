@@ -21,3 +21,6 @@ user-api/proto
 
 postgres-data/
 tmp/
+
+target/
+

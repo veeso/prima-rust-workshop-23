@@ -12,8 +12,6 @@ RUN PROTOC_VERSION=$(curl -s "https://api.github.com/repos/protocolbuffers/proto
 COPY . /app/user-api
 WORKDIR /app/user-api
 
-RUN cp -r /app/user-api/proto/ /app/proto
-
 USER root
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
